@@ -21,7 +21,7 @@
 }
 
 html, body {
-  height: 100%;
+  min-height: 100%;
 }
 
 body {
@@ -30,10 +30,12 @@ body {
   background:
     radial-gradient(60% 50% at 15% 0%, rgba(91, 62, 158, 0.35), transparent 60%),
     radial-gradient(50% 40% at 100% 10%, rgba(60, 40, 110, 0.3), transparent 60%),
-    linear-gradient(180deg, #0d0a1c 0%, #120e26 50%, #0d0a1c 100%);
+    linear-gradient(180deg, #0d0a1c 0%, #120e26 50%, #0d0a1c 100%)
+    fixed;
   color: var(--mist-bright);
   font-family: var(--font-body);
   -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
 }
 
 .sr-only {
