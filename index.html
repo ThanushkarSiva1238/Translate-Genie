@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Translate Genie — Translate Beyond Words</title>
+<meta name="description" content="Translate Genie is an AI-powered translation assistant for Translation Studies students, built around Tamil, English, and Sinhala." />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Spectral:wght@400;500;600&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+  <div class="stars" aria-hidden="true"></div>
+
+  <main class="app">
+    <header class="header">
+      <div class="brand">
+        <div class="genie-avatar float breathe head" id="header-genie" style="width:50px;height:50px;">
+          <img src="assets/genie-idle.png" alt="" />
+        </div>
+        <div>
+          <h1>Translate Genie</h1>
+          <p class="brand-sub">AI Translation Supporter</p>
+        </div>
+      </div>
+      <nav class="nav">
+        <button type="button" id="settings-btn" class="link-btn">API Key</button>
+        <button type="button" id="about-btn" class="link-btn">About</button>
+      </nav>
+    </header>
+
+    <p class="tagline">Translate beyond words. Understand beyond language.</p>
+
+    <section class="chat-panel glass">
+      <div class="chat-toolbar">
+        <label class="mode-toggle">
+          <span>Quick</span>
+          <button type="button" role="switch" aria-checked="false" id="mode-switch" class="switch">
+            <span class="switch-knob"></span>
+          </button>
+          <span>Study</span>
+        </label>
+        <div class="toolbar-actions">
+          <button type="button" id="history-btn" class="pill-btn">History</button>
+          <button type="button" id="new-btn" class="pill-btn pill-btn--accent">New Translation</button>
+        </div>
+      </div>
+
+      <div class="chat-messages" id="chat-messages" aria-live="polite"></div>
+
+      <div class="chat-input-bar">
+        <div class="input-shell glass">
+          <label for="chat-input" class="sr-only">Text to translate</label>
+          <textarea id="chat-input" rows="1" placeholder="Type or paste text..."></textarea>
+          <button type="button" id="clear-input-btn" class="icon-btn hidden" aria-label="Clear input">✕</button>
+          <button type="button" id="send-btn" class="send-btn" aria-label="Send" disabled>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 12l16-8-6 8 6 8-16-8z" fill="currentColor"/></svg>
+          </button>
+        </div>
+        <p class="word-count hidden" id="word-count"></p>
+      </div>
+    </section>
+
+    <div class="footer">
+      <p class="footer-note" style="font-size: 0.875rem;">Built for Translation Studies Students - University of Jaffna</p>
+      <p class="footer-note footer-credit" style="font-size: 0.82rem;">Beyond the Words & Screen (14 Batch - 2<sup>nd</sup>  Year)</p>
+      <p class="footer-note footer-credit" style="font-size: 0.75rem;">Developed By: Thanushkar Sivakumar</p>
+    </div>
+  </main>
+
+  <!-- About modal -->
+  <div class="modal-overlay hidden" id="about-modal">
+    <div class="modal glass" role="dialog" aria-modal="true" aria-label="About Translate Genie">
+      <div class="modal-head">
+        <h2>Translate Genie</h2>
+        <button type="button" class="icon-btn" data-close-modal aria-label="Close">✕</button>
+      </div>
+      <p>Translate Genie is an AI-powered translation support platform designed to help Translation Studies students explore languages, understand translations, and practice different forms of expression across Tamil, English, Sinhala, and beyond.</p>
+      <p class="muted">AI-generated translations should still be reviewed carefully, especially for academic, legal, technical, or highly contextual and cultural content.</p>
+
+      <div class="about-section">
+        <p class="about-heading">Supported languages</p>
+        <p class="muted small">Tamil, English, and Sinhala are the primary languages, with quick-select buttons for all three. Dozens more — including Hindi, Malayalam, Telugu, Kannada, Bengali, Urdu, Arabic, Chinese, Japanese, Korean, French, German, Spanish, and many others — are searchable from the "Other" and language-change menus. You can also type in any language name Gemini can translate, even if it isn't in the suggested list.</p>
+      </div>
+
+      <div class="about-section">
+        <p class="about-heading">Listen / pronunciation</p>
+        <p class="muted small">The speaker button first tries Google's Gemini text-to-speech for a natural voice. If that's ever unavailable (offline, rate-limited, etc.), it automatically falls back to your browser's own built-in voice. That fallback works in every modern browser, but which languages it can actually speak depends on the voices installed on your device — Chrome and Edge on Windows or Android generally have the widest language coverage; Safari and Firefox support varies more by operating system, especially for Tamil and Sinhala.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Language picker modal (used to change a translation's target language
+       instantly, without retyping the original text) -->
+  <div class="modal-overlay hidden" id="language-picker-modal">
+    <div class="modal glass" role="dialog" aria-modal="true" aria-label="Choose a language">
+      <div class="modal-head">
+        <h2>Translate to</h2>
+        <button type="button" class="icon-btn" data-close-modal aria-label="Close">✕</button>
+      </div>
+      <label for="language-picker-search" class="sr-only">Search languages</label>
+      <input type="text" id="language-picker-search" class="other-lang-input" placeholder="Search languages" autocomplete="off" />
+      <div class="lang-picker-list" id="language-picker-list"></div>
+    </div>
+  </div>
+
+  <!-- History modal -->
+  <div class="modal-overlay hidden" id="history-modal">
+    <div class="modal glass" role="dialog" aria-modal="true" aria-label="Translation history">
+      <div class="modal-head">
+        <h2>History</h2>
+        <button type="button" class="icon-btn" data-close-modal aria-label="Close">✕</button>
+      </div>
+      <div class="history-list" id="history-list"></div>
+      <div class="modal-foot hidden" id="history-clear-row">
+        <button type="button" id="clear-history-btn" class="pill-btn pill-btn--danger">Clear history</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Settings / API key modal -->
+  <div class="modal-overlay hidden" id="settings-modal">
+    <div class="modal glass" role="dialog" aria-modal="true" aria-label="Gemini API key settings">
+      <div class="modal-head">
+        <h2>Your Gemini API key</h2>
+        <button type="button" class="icon-btn" data-close-modal aria-label="Close">✕</button>
+      </div>
+
+      <p class="muted small">
+        This site runs entirely in your browser — there is no server. Your key is saved only in
+        this browser's local storage and is sent straight from your browser to Google's API when
+        you translate. Never enter your key on a version of this site you don't control or trust,
+        and never share this key with others.
+      </p>
+
+      <label for="api-key-input" class="field-label">API key</label>
+      <div class="key-input-row">
+        <input type="password" id="api-key-input" placeholder="Paste your Gemini API key" autocomplete="off" />
+        <button type="button" id="toggle-key-visibility" class="icon-btn" aria-label="Show key">👁</button>
+      </div>
+
+      <div class="key-actions">
+        <button type="button" id="save-key-btn" class="pill-btn pill-btn--accent">Save key</button>
+        <button type="button" id="clear-key-btn" class="pill-btn pill-btn--danger">Clear key</button>
+        <span id="key-status" class="key-status"></span>
+      </div>
+
+      <details class="guide">
+        <summary>How do I get a Gemini API key?</summary>
+        <ol>
+          <li>Go to <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener noreferrer">Google AI Studio → Get API key</a> and sign in with your Google account.</li>
+          <li>Click <strong>Create API key</strong>. If asked, choose or create a Google Cloud project — the free option works fine for this app.</li>
+          <li>Copy the key Google generates. It's a long string starting with <code>AIza...</code>.</li>
+          <li>Paste it into the field above and click <strong>Save key</strong>.</li>
+          <li>That's it — Translate Genie will use it for every request from this browser. You can come back here anytime to update or remove it.</li>
+        </ol>
+        <p class="muted small">Google's Gemini free tier is generous for personal study use, but has a request-per-minute limit — if translations suddenly fail, wait a minute and try again.</p>
+      </details>
+    </div>
+  </div>
+
+  <div class="toast hidden" id="toast" role="status"></div>
+
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>
