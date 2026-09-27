@@ -34,7 +34,6 @@ body {
   color: var(--mist-bright);
   font-family: var(--font-body);
   -webkit-font-smoothing: antialiased;
-  overflow-x: hidden;
 }
 
 .sr-only {
